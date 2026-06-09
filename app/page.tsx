@@ -20,9 +20,9 @@ export default async function Home() {
   const promoVariants =
   variants?.filter(
     (v) =>
-      v.promo_price &&
-      v.promo_price > 0 &&
-      v.promo_price < v.price
+      v.public_promo_price &&
+      v.public_promo_price > 0 &&
+      v.public_promo_price < v.public_price
   ) || [];
 
   return (
@@ -42,7 +42,7 @@ export default async function Home() {
         <div className="mb-8">
 
   <span className="inline-block px-3 py-1.5 rounded-full bg-green-500/20 text-green-400 text-sm font-medium mb-4">
-    🔥 Harga Reseller
+    🔥 Promo Terbaik
   </span>
 
   <div className="flex items-center gap-6">
@@ -60,7 +60,7 @@ export default async function Home() {
 
     <div>
       <h1 className="text-3xl lg:text-4xl font-bold">
-        DH Store Reseller
+        DH Store 
       </h1>
 
       <p className="text-zinc-400 mt-2 text-lg">
@@ -87,7 +87,7 @@ export default async function Home() {
   </div>
 
   <div className="px-3 py-1.5 rounded-xl bg-zinc-900/60 border border-zinc-700">
-    💰 Harga Reseller
+    🛡️ Garansi Aman
   </div>
 
 </div>
@@ -109,14 +109,13 @@ export default async function Home() {
       {promoVariants.slice(0, 8).map((item) => {
 
         const discount =
-          Math.round(
-            ((item.price - item.promo_price) /
-              item.price) *
-              100
-          );
+        Math.round(
+        ((item.public_price - item.public_promo_price)
+        / item.public_price) * 100
+        );
 
         const saving =
-          item.price - item.promo_price;
+        item.public_price - item.public_promo_price;
 
         return (
           <div
@@ -128,15 +127,15 @@ export default async function Home() {
             </p>
 
             <p className="text-zinc-500 text-sm line-through">
-              Rp {item.price.toLocaleString("id-ID")}
+              Rp {item.public_price.toLocaleString("id-ID")}
             </p>
 
             <p className="text-red-400 font-bold text-lg">
-              Rp {item.promo_price.toLocaleString("id-ID")}
+              Rp {item.public_promo_price.toLocaleString("id-ID")}
             </p>
-            {item.promo_note && (
+            {item.public_promo_note && (
               <p className="text-xs text-zinc-400 mt-2">
-             📌 {item.promo_note}
+             📌 {item.public_promo_note}
             </p> 
             )}
 
@@ -172,15 +171,15 @@ const sortedProducts = [...categoryProducts].sort(
     const aPromo = variants?.some(
       (v) =>
         v.product_id === a.id &&
-        v.promo_price &&
-        v.promo_price > 0
+        v.public_promo_price &&
+        v.public_promo_price > 0
     );
 
     const bPromo = variants?.some(
       (v) =>
         v.product_id === b.id &&
-        v.promo_price &&
-        v.promo_price > 0
+        v.public_promo_price &&
+        v.public_promo_price > 0
     );
 
     return Number(bPromo) - Number(aPromo);
@@ -213,7 +212,7 @@ const sortedProducts = [...categoryProducts].sort(
                   productVariants.length > 0
                     ? Math.min(
                         ...productVariants.map(
-                          (v) => v.promo_price || v.price || 0
+                          (v) => v.public_price || v.price || 0
                         )
                       )
                     : null;

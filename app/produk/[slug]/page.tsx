@@ -113,7 +113,7 @@ export default async function ProductPage({
                                 {item.title}
                             </h3>
 
-                            {item.promo_price && (
+                            {item.public_promo_price && (
                                 <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
                                 🔥 PROMO
                                 </span>
@@ -123,26 +123,26 @@ export default async function ProductPage({
 
                             <div className="mt-4">
 
-                            {item.promo_price ? (
+                            {item.public_promo_price ? (
                                 <>
                                 <p className="text-zinc-500 line-through text-lg">
-                                    Rp {item.price?.toLocaleString("id-ID")}
+                                    Rp {item.public_price?.toLocaleString("id-ID")}
                                 </p>
 
                                 <p className="text-3xl font-bold text-green-400">
-                                    Rp {item.promo_price?.toLocaleString("id-ID")}
+                                    Rp {item.public_promo_price?.toLocaleString("id-ID")}
                                 </p>
                                 </>
                             ) : (
                                 <p className="text-3xl font-bold text-green-400">
-                                Rp {item.price?.toLocaleString("id-ID")}
+                                Rp {item.public_price?.toLocaleString("id-ID")}
                                 </p>
                             )}
 
-                            {item.promo_note && (
+                            {item.public_promo_note && (
                              <div className="mt-1 rounded-lg bg-yellow-400/10 border border-yellow-400/10 p-3">
                               <p className="text-sm text-yellow-500">
-                            📌 Syarat Promo: {item.promo_note}
+                            📌 Syarat Promo: {item.public_promo_note}
                                 </p>
                             </div>
                             )}
@@ -177,9 +177,12 @@ export default async function ProductPage({
                                     href={`https://wa.me/6289510588347?text=${encodeURIComponent(
                                         `Halo Kakk Dhean, beli donkkkk:
 
-Produk: ${product.name}
-Paket: ${item.title}
-Harga: Rp ${item.price?.toLocaleString("id-ID")}`
+                                    Produk: ${product.name}
+                                    Paket: ${item.title}
+                                    Harga: Rp ${
+                                    (item.public_promo_price || item.public_price)
+                                    ?.toLocaleString("id-ID")
+                                    }`
                                     )}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
