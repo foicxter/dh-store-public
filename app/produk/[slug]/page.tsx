@@ -1,0 +1,209 @@
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  return {
+    title: `${slug} Premium Murah | DH Store`,
+    description: `Beli ${slug} premium dengan harga terjangkau dan garansi di DH Store.`,
+  };
+}
+export default async function ProductPage({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}) {
+    const { slug } = await params;
+
+    const { data: product } = await supabase
+        .from("products")
+        .select("*")
+        .eq("slug", slug)
+        .single();
+
+    if (!product) {
+        return (
+            <div className="p-10 text-white">
+                Produk tidak ditemukan
+            </div>
+        );
+    }
+
+    const { data: variants } = await supabase
+        .from("variants")
+        .select("*")
+        .eq("product_id", product.id)
+        .eq("is_active", true)
+        .order("price", { ascending: true });
+
+    
+    return (
+        <main className="min-h-screen text-white relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-[700px] h-[700px] bg-green-500/30 blur-[180px] rounded-full" />
+
+            <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-blue-500/30 blur-[180px] rounded-full" />
+
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-purple-500/15 blur-[200px] rounded-full" />
+            <div className="relative z-10 max-w-5xl mx-auto p-8">
+
+                <Link
+                    href="/"
+                    className="inline-block mb-8 text-zinc-400 hover:text-white"
+                >
+                    ← Kembali ke Home
+                </Link>
+
+                <div className="flex items-center gap-4 mb-8">
+
+                    <img
+                        src={`/icons/${product.slug}.png`}
+                        alt={product.name}
+                        className="w-10 h-10 rounded-xl"
+                    />
+
+                    <div>
+                        <h1 className="text-3xl font-bold">
+                            {product.name}
+                        </h1>
+
+                        {product.badge && (
+                            <span className="inline-block mt-2 text-sm font-semibold bg-gradient-to-r from-orange-500 to-yellow-500 text-black px-3 py-1 rounded-full">
+                                {product.badge}
+                            </span>
+                        )}
+                    </div>
+
+                </div>
+
+                <p className="text-zinc-400 mb-8">
+                    {product.description}
+                </p>
+
+                <div className="grid md:grid-cols-2 gap-3">
+
+                    {variants?.map((item) => (
+                        <div
+                            key={item.id}
+                            className="
+                            bg-zinc-900/70
+                            backdrop-blur-xl
+                            border border-zinc-800
+                            rounded-2xl
+                            p-4
+                            transition-all
+                            duration-300
+                            hover:border-green-500/40
+                            "
+                        >
+                            {item.badge && (
+                                <span className="inline-block mb-3 px-3 py-1 rounded-full bg-green-600 text-sm">
+                                    {item.badge}
+                                </span>
+                            )}
+
+                            <div className="flex items-start justify-between gap-3">
+
+                            <h3 className="font-bold text-xl leading-tight">
+                                {item.title}
+                            </h3>
+
+                            {item.promo_price && (
+                                <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                                🔥 PROMO
+                                </span>
+                            )}
+
+                            </div>
+
+                            <div className="mt-4">
+
+                            {item.promo_price ? (
+                                <>
+                                <p className="text-zinc-500 line-through text-lg">
+                                    Rp {item.price?.toLocaleString("id-ID")}
+                                </p>
+
+                                <p className="text-3xl font-bold text-green-400">
+                                    Rp {item.promo_price?.toLocaleString("id-ID")}
+                                </p>
+                                </>
+                            ) : (
+                                <p className="text-3xl font-bold text-green-400">
+                                Rp {item.price?.toLocaleString("id-ID")}
+                                </p>
+                            )}
+
+                            {item.promo_note && (
+                             <div className="mt-1 rounded-lg bg-yellow-400/10 border border-yellow-400/10 p-3">
+                              <p className="text-sm text-yellow-500">
+                            📌 Syarat Promo: {item.promo_note}
+                                </p>
+                            </div>
+                            )}
+
+                            </div>
+
+                            <div className="mt-4 space-y-2 text-zinc-300">
+
+                                {item.duration && (
+                                    <p>
+                                        ⏳ Durasi: {item.duration}
+                                    </p>
+                                )}
+
+                                {item.guarantee && (
+                                    <p>
+                                        🛡️ Garansi: {item.guarantee}
+                                    </p>
+                                )}
+
+                                {item.description && (
+                                    <p>
+                                        📋 {item.description}
+                                    </p>
+                                )}
+
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3 mt-6">
+
+                                <a
+                                    href={`https://wa.me/6289510588347?text=${encodeURIComponent(
+                                        `Halo Kakk Dhean, beli donkkkk:
+
+Produk: ${product.name}
+Paket: ${item.title}
+Harga: Rp ${item.price?.toLocaleString("id-ID")}`
+                                    )}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-center bg-green-600 hover:bg-green-500 py-3 rounded-xl font-semibold"
+                                >
+                                    WhatsApp
+                                </a>
+
+                                <a
+                                    href="https://t.me/dihisell"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-center bg-sky-600 hover:bg-sky-500 py-3 rounded-xl font-semibold"
+                                >
+                                    Telegram
+                                </a>
+
+                            </div>
+                        </div>
+                    ))}
+
+                </div>
+
+            </div>
+        </main>
+    );
+}
